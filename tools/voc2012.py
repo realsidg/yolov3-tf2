@@ -11,7 +11,7 @@ import tqdm
 flags.DEFINE_string('data_dir', './data/voc2012_raw/VOCdevkit/VOC2012/',
                     'path to raw PASCAL VOC dataset')
 flags.DEFINE_enum('split', 'train', [
-                  'train', 'val'], 'specify train or val spit')
+                  'train', 'val','test'], 'specify train or val spit')
 flags.DEFINE_string('output_file', './data/voc2012_train.tfrecord', 'outpot dataset')
 flags.DEFINE_string('classes', './data/voc2012.names', 'classes file')
 
@@ -96,7 +96,7 @@ def main(_argv):
         FLAGS.data_dir, 'ImageSets', 'Main', '%s.txt' % FLAGS.split)).read().splitlines()
     logging.info("Image list loaded: %d", len(image_list))
     for image in tqdm.tqdm(image_list):
-        name, _ = image.split()
+        name = image
         annotation_xml = os.path.join(
             FLAGS.data_dir, 'Annotations', name + '.xml')
         annotation_xml = lxml.etree.fromstring(open(annotation_xml).read())
