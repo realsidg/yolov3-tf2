@@ -58,6 +58,7 @@ def main(_argv):
 
     # instantiating the model in the strategy scope creates the model on the TPU
     with tpu_strategy.scope():
+        BATCH_SIZE = FLAGS.batch_size * tpu_strategy.num_replicas_in_sync
         if FLAGS.tiny:
             model = YoloV3Tiny(FLAGS.size, training=True,
                             classes=FLAGS.num_classes)
@@ -73,7 +74,7 @@ def main(_argv):
             train_dataset = dataset.load_tfrecord_dataset(
                 FLAGS.dataset, FLAGS.classes, FLAGS.size)
         train_dataset = train_dataset.shuffle(buffer_size=512)
-        train_dataset = train_dataset.batch(FLAGS.batch_size)
+        train_dataset = train_dataset.batch(BATCH_SIZE)
         train_dataset = train_dataset.map(lambda x, y: (
             dataset.transform_images(x, FLAGS.size),
             dataset.transform_targets(y, anchors, anchor_masks, FLAGS.size)))
@@ -84,7 +85,7 @@ def main(_argv):
         if FLAGS.val_dataset:
             val_dataset = dataset.load_tfrecord_dataset(
                 FLAGS.val_dataset, FLAGS.classes, FLAGS.size)
-        val_dataset = val_dataset.batch(FLAGS.batch_size)
+        val_dataset = val_dataset.batch(BATCH_SIZE)
         val_dataset = val_dataset.map(lambda x, y: (
             dataset.transform_images(x, FLAGS.size),
             dataset.transform_targets(y, anchors, anchor_masks, FLAGS.size)))
