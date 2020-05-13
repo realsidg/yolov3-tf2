@@ -79,7 +79,8 @@ def main(_argv):
         dataset.transform_targets(y, anchors, anchor_masks, FLAGS.size)))
     train_dataset = train_dataset.prefetch(
         buffer_size=tf.data.experimental.AUTOTUNE)
-
+    train_dataset = train_dataset.apply(tf.data.experimental.ignore_errors())
+    
     val_dataset = dataset.load_fake_dataset()
     if FLAGS.val_dataset:
         val_dataset = dataset.load_tfrecord_dataset(
@@ -88,6 +89,7 @@ def main(_argv):
     val_dataset = val_dataset.map(lambda x, y: (
         dataset.transform_images(x, FLAGS.size),
         dataset.transform_targets(y, anchors, anchor_masks, FLAGS.size)))
+    val_dataset = val_dataset.apply(tf.data.experimental.ignore_errors())
 
     # Configure the model for transfer learning
     if FLAGS.transfer == 'none':

@@ -22,6 +22,7 @@ def main(_argv):
     logging.info('classes loaded')
 
     dataset = load_tfrecord_dataset(FLAGS.dataset, FLAGS.classes, FLAGS.size)
+    dataset = dataset.apply(tf.data.experimental.ignore_errors())
     dataset = dataset.shuffle(512)
 
     for image, labels in dataset.take(1):
