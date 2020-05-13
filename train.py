@@ -91,6 +91,8 @@ def main(_argv):
         dataset.transform_targets(y, anchors, anchor_masks, FLAGS.size)))
     val_dataset = val_dataset.apply(tf.data.experimental.ignore_errors())
 
+
+    model.load_weights(FLAGS.weights)
     # Configure the model for transfer learning
     if FLAGS.transfer == 'none':
         pass  # Nothing to do
